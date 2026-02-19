@@ -1,4 +1,4 @@
-# Gen-AI
+# Gen_AI
 
 Here we need to run 
 
