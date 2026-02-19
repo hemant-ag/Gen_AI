@@ -1,0 +1,34 @@
+Gen AI:
+
+We have foundation models that are used in LLM such as chatgpt, gemini etc.
+
+We have 2 sides , user and builder perspective.
+
+Builder perspective:
+
+Here we look for creating a model from scratch
+Here it is needed to understand the points:
+
+1)	transformer architecture , how they can be used.
+2)	what types of transformer are required, encoder only(bert), decoder only(gpt), or both(t5).
+3) 	pre training like strategies for training such as how can tokenization be achieved, training objectives and strategies, handling challenges
+4)	models are based on a large dataset, they cannot be run on a normal hardware, so optimization is required, so we have optimization techniques such a training optimization, model compression techniques such as quantization, knowledge distillation etc then also optimizing inference which is used for reducing time of prediction from LLM.
+5)	Fine tuning is required, so that we can fine tune:
+	a)	as per some task(RLHF or Reinforcement Learning from Human Feedback)
+	b)	as per instruction (Parameter-efficient fine-tuning (PEFT) techniques such as prompt tuning, prefix tuning). this optimizes large language model (LLM) performance by training only a small number of extra parameters while freezing the pre-trained model. This approach drastically reduces computational and storage costs, prevents catastrophic forgetting, and enables efficient, domain-specific adaptation on limited hardware.
+	c) Continual pretraining.
+6)	Evaluation of LLM models
+7)	Deployment of LLM models
+
+User perspective:
+
+Here we look for building LLM based applications
+Here it is needed to understand the points:
+
+1)	what are open source , closed source LLM's , how to use open source LLM's using API, and how to use closed LLM from tools such as hugging face, llama, langchain.
+2)	understanding prompt engineering how we can provide a good prompt and improve the response.
+3) 	RAG -- LLM are trained on their data, they dont have access to personal data , so with the help of RAG, we can create chatbots to have question answer on my personal data
+4)	Fine tuning -- here also fine tuning is needed , but it is not as deep as it is in builder perspective.
+5)	Agents -- this field is becoming popular , as here apart from conversation we also provide chatbots access to some tools such that they can perform some work for us
+6)	LLMOps -- this is the combination of LLM and operations required for deploying , understanding different challenges while deploying
+7)	Miscellaneous topics like stable diffusion , diffusion based models etc
