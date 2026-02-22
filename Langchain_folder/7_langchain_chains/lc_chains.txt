@@ -1,0 +1,57 @@
+This video from CampusX, titled "Chains in LangChain | Generative AI using LangChain | Video 7 | CampusX," provides a comprehensive introduction to the concept of "Chains" within the LangChain framework. The video explains what Chains are, why they are necessary for building complex AI applications, and demonstrates how to build three different types of Chains: Simple Chains, Sequential Chains, and Conditional Chains.
+
+Here's a breakdown of the key concepts and demonstrations:
+
+Recap of Previous Concepts:
+The video begins with a quick recap of previously covered LangChain components, including Models (for interacting with AI models), Prompts (for sending various types of inputs to LLMs), and Output Parsers (for generating structured output from LLMs).
+
+What and Why of Chains:
+
+Chains are essential for building LLM-based applications, which often involve multiple smaller, interconnected steps (e.g., getting user input, sending it to an LLM, processing the response, and displaying the output).
+Manually managing these steps can be tedious. Chains offer a way to create "pipelines" where the output of one step automatically becomes the input for the next, simplifying the development process.
+Chains allow for the creation of various pipeline structures, including linear (sequential), parallel, and conditional flows.
+
+
+Simple Chain:
+
+A simple Chain demonstrates the basic concept of connecting sequential steps.
+The example involves:
+Taking a topic from the user.
+Generating five interesting facts about that topic using an LLM.
+Displaying the output to the user.
+This is achieved by linking a PromptTemplate, an LLM (ChatOpenAI), and a StringOutputParser using the "pipe operator" (LangChain Expression Language - LCEL).
+
+
+Sequential Chain:
+
+This type of Chain extends the simple Chain by involving multiple LLM calls in sequence.
+The application demonstrated:
+Takes a topic from the user.
+Uses an LLM to generate a detailed report on that topic.
+Takes the detailed report and feeds it back to the same LLM with a new prompt to extract a five-point summary.
+This illustrates how the output of one LLM call can become the input for a subsequent LLM call within the same Chain.
+
+
+Parallel Chain:
+
+Parallel Chains allow for simultaneous execution of multiple sub-chains.
+The example application:
+Takes a detailed text document from the user (e.g., on Linear Regression).
+In parallel, generates two different outputs from this text:
+Short and simple notes.
+Five short question-answers (a quiz).
+Merges both the notes and the quiz into a single document for the user.
+This is achieved using RunnableParallel, where different models (e.g., ChatOpenAI and ChatAnthropic) can process the initial text simultaneously.
+
+
+Conditional Chains:
+
+Conditional Chains enable dynamic execution paths based on specific conditions, similar to if-else statements.
+The application demonstrated:
+Takes user feedback about a product.
+Classifies the sentiment of the feedback as either "positive" or "negative" using an LLM. To ensure consistent output for classification, PydanticOutputParser is used.
+Based on the classified sentiment:
+If "positive," an appropriate positive reply is generated (e.g., "Thank you for your kind words").
+If "negative," an appropriate negative reply is generated (e.g., "I am sorry to hear that you had a negative experience").
+RunnableBranch is utilized for implementing this conditional logic, allowing different Chains to be executed based on the sentiment classification. The video also briefly mentions RunnableLambda for default cases.
+The video concludes by emphasizing the power and versatility of Chains in building complex LangChain applications, even in future concepts like Agents. The next video in the series promises to delve deeper into the underlying "Runnable" concept, which is crucial for understanding how Chains work internally.

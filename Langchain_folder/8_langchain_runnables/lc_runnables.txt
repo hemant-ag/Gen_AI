@@ -1,0 +1,96 @@
+This video provides a comprehensive and in-depth explanation of Runnables in LangChain, offering a deeper understanding of the framework's internal workings and how to leverage them for building flexible and powerful AI applications.
+
+Here's a detailed summary of the video's content:
+
+Introduction to Runnables and Video Overview: The presenter introduces Runnables as a crucial concept for understanding how LangChain works, especially how Chains function internally. He emphasizes the video's technical depth and its importance for gaining a deeper understanding of LangChain.
+
+Recap of Chains: The video starts with a quick recap of the previous video's topic: LangChain Chains.
+
+	Chains are highlighted as a very important component within LangChain.
+	Three types of chains discussed previously are mentioned: Sequential Chain, Parallel Chain, and Conditional Chain.
+	It's explained that Chains function "behind the scenes"Hemant_langchain_mentos_zindagi with the help of Runnables.
+
+Why Do Runnables Exist? 
+The Problems with Chains: The video then delves into the core problem that Runnables aim to solve.
+
+	LangChain's initial goal was to help AI engineers build LLM-based applications by providing various components like LLMs, prompts, parsers, and retrievers.
+	They anticipated that engineers would need to combine these components in different ways, like Lego blocks, to create flexible workflows.
+	However, the approach of creating "too many Chains" for every use case led to significant disadvantages:
+		Large Codebase: The LangChain codebase became very big and difficult to maintain.
+		Steep Learning Curve: New AI engineers found it hard to understand which Chain to use for specific use cases.
+	
+	The fundamental issue was that the various components (LLM, Prompt, Parser, Retriever) were not standardized. They had different methods for interaction (e.g., predict for LLMs, format for prompts, get_relevant_documents for retrievers, parse for parsers). This lack of standardization made it difficult to connect them flexibly without writing a lot of custom chain-specific code.
+	Issue is mentioned in Hemant_langchain_aam_zindagi.py where we have different methods for different components.
+
+What Are Runnables?: 
+Runnables are introduced as the solution to this standardization problem.
+	
+	Solution is mentioned in Hemant_langchain_mentos_zindagi.py where we have issued solutions for above problems.
+	Runnables are defined as a "unit of work", where each Runnable has a specific purpose and takes an input to produce an output.
+	The key characteristic is that every Runnable follows a common interface, meaning they all have the same set of methods.
+	The most important common method is invoke: it takes a single input and returns a single output. Other methods like batch (for multiple inputs/outputs) and stream (for streaming outputs) also exist.
+	Because they share a common interface, Runnables can be connected seamlessly to create complex workflows. The output of one Runnable automatically becomes the input for the next.
+	Crucially, a workflow created by connecting multiple Runnables is itself a Runnable. This allows for nested chaining and highly complex structures.
+	The analogy of Lego blocks is used to explain Runnables visually: each block is a unit of work, they all have a common connection interface, they can be connected to form structures, and those structures can themselves be treated as larger Lego blocks.
+
+
+Code Demo: From Problem to Solution: The presenter then goes through a detailed code demonstration to illustrate the concepts.
+
+	Simulating the Problem (Non-Standardized Components):
+
+		He creates a dummy NakliLLM (Fake LLM) class with a predict method.
+		He creates a dummy NakliPromptTemplate (Fake Prompt Template) class with a format method.
+		He demonstrates how an AI engineer would manually connect these: first, format the prompt, then call the LLM's predict method.
+		He then shows how LangChain tried to help by creating a NakliLLMChain class. This chain encapsulates the prompt formatting and LLM prediction. However, he highlights that this chain is not flexible enough for multi-step or complex workflows because the run method inside the chain can't easily adapt to different interaction patterns. This confirms the problem statement: components need standardization.
+
+
+Implementing the Solution (Standardized Components with Runnables):
+
+	He defines an abstract Runnable class using Python's abc module. This class has an abstract invoke method.
+	He modifies NakliLLM to inherit from Runnable. This forces NakliLLM to implement the invoke method, which now performs the same logic as the old predict method. A warning is added to the predict method, indicating it will be deprecated.
+	Similarly, NakliPromptTemplate is also made to inherit from Runnable and implement its invoke method, replacing the format method's functionality.
+	This standardization means both components now have a common invoke method for interaction.
+
+
+Composing Standardized Runnables into Chains:
+
+	A new class, RunnableConnector, is created. This class also inherits from Runnable.
+	Its constructor takes a list of Runnables.
+	The RunnableConnector's invoke method loops through the provided list of Runnables. It passes the output of one Runnable as the input to the next.
+	Example 1: Simple Chain with Prompt, LLM, and Parser:
+		He instantiates NakliLLM and NakliPromptTemplate.
+		He creates a NakliStrOutputParser (Fake String Output Parser) that also inherits from Runnable and has an invoke method to extract the string response.
+		He then creates a chain using RunnableConnector by passing [template, llm, parser].
+		Calling chain.invoke() now runs the entire sequence automatically.
+	
+	Example 2: Chaining Chains Together (Nested Runnables):
+
+		He creates template1 (to generate a joke about a topic) and template2 (to explain a joke about a response).
+		He creates chain1 using RunnableConnector with [template1, llm]. This chain generates a joke.
+		He creates chain2 using RunnableConnector with [template2, llm, parser]. This chain explains a joke.
+		Finally, he creates a final_chain using RunnableConnector with [chain1, chain2]. This demonstrates how a chain (which is a Runnable) can be an element in another chain.Hemant_langchain_mentos_zindagi
+		Calling final_chain.invoke({'topic': 'cricket'}) executes the entire multi-step workflow, where the output of chain1 becomes the input of chain2 automatically.
+
+
+Real LangChain Code Exploration: The video concludes by showing actual LangChain source code. He navigates through the inheritance hierarchy of ChatOpenAI and demonstrates how it ultimately inherits from the Runnable abstract class, which contains the invoke abstract method. This validates that the concepts explained in the video are precisely what LangChain implements internally.
+
+
+This video continues the discussion on LangChain Runnables, building upon the previous video's introduction to the concept. The core idea behind Runnables in LangChain is to standardize all components used in building Large Language Model (LLM) applications. Initially, LangChain offered various components like prompt templates, LLMs, parsers, and retrievers, but they lacked standardization, making it difficult to connect them flexibly. To address this, LangChain introduced the Runnable abstract class, which all components now inherit, enforcing a common interface (like the invoke function) and enabling seamless chaining of operations.
+
+The video categorizes Runnables into two main types:
+
+a) Task-Specific Runnables: These are the core LangChain components (like ChatOpenAI, PromptTemplate, StringOutputParser) that have been converted into Runnables. They each have a specific purpose in an LLM application.
+
+b) Runnable Primitives: These are fundamental building blocks that help connect and orchestrate different task-specific Runnables to create complex AI workflows. The video delves into several key Runnable Primitives:
+
+	1) RunnableSequence: This primitive allows you to connect two or more Runnables in a sequential manner. The output of the first Runnable automatically becomes the input for the second, and so on. This is a very common use case for building linear chains of operations, such as a prompt followed by an LLM, followed by a parser.
+
+	2) RunnableParallel: This primitive enables the parallel execution of multiple Runnables. Each Runnable in the parallel block receives the same input and processes it independently. The outputs are then returned as a dictionary, with each Runnable's output accessible by a key. This is useful when you want to generate multiple different types of outputs (e.g., a tweet and a LinkedIn post) from the same input simultaneously.
+
+	3) RunnablePassthrough: This is a special primitive that simply passes its input directly as its output without any modification or processing. While seemingly counterintuitive, it's useful in scenarios where you need to propagate the original input through a chain, especially when combining with parallel operations, to ensure all necessary information is available downstream. For example, if you generate a joke and its explanation, RunnablePassthrough can ensure the original joke is also part of the final output alongside its explanation.
+
+	4) RunnableLambda: This powerful primitive allows you to convert any standard Python function into a Runnable. This means you can integrate custom Python logic, such as data preprocessing, custom calculations, or conditional checks, directly into your LangChain workflow as a standard component. This is particularly useful for tasks like cleaning text data before sending it to an LLM or performing word counts on generated text.
+
+	5) RunnableBranch: This primitive introduces conditional logic into your chains. It allows you to define multiple execution paths, and based on a specified condition (e.g., the length of a generated report, the category of an email), only one of these paths will be triggered. This is crucial for building dynamic and intelligent workflows that adapt their behavior based on intermediate results. It will go to default condition if provided.
+
+The video concludes by introducing LangChain Expression Language (LCEL), which is a more declarative and concise way to define sequential chains using the pipe (|) operator. Instead of explicitly creating a RunnableSequence object and passing a list of Runnables, LCEL allows you to chain them directly, making the code cleaner and more readable. While LCEL currently primarily focuses on RunnableSequence, the presenter anticipates that future versions of LangChain might extend it to cover other Runnable Primitives like RunnableParallel and RunnableBranch with similar declarative syntax.

@@ -1,0 +1,61 @@
+This video focuses on structured output in LangChain, explaining how to make Large Language Models (LLMs) interact with databases, APIs, and other systems using structured responses like JSON, rather than just unstructured text.
+
+The video begins by recapping the previous discussion on prompts and how they are used to give input to LLMs. It then transitions to the main topic: processing the output received from LLMs.
+
+What is Structured Output?
+The presenter first defines unstructured output, which is typically the plain text response you get from an LLM like ChatGPT. Structured output, on the other hand, refers to responses in a well-defined data format, such as JSON. This makes the model's output much easier to parse and work with programmatically, facilitating integration with other systems. For example, instead of getting a travel itinerary as plain text, structured output would provide it as a JSON object with clearly defined keys like "time" and "activity."
+
+Why Structured Output is Needed (Use Cases):
+Structured output offers significant benefits, especially for automation and data processing. Three main use cases are highlighted:
+
+	Data Extraction: When building systems that require storing LLM output in a database (e.g., a job portal extracting information like name, company, and marks from a resume), structured output in JSON format simplifies the process of parsing and inserting data.
+	Building APIs: For applications like e-commerce review analysis, an API can use LLMs to extract key information (topics, pros, cons, sentiment) from lengthy text reviews and provide it in a structured format, which can then be consumed by other services.
+	Building Agents: Structured output is crucial for building AI agents that interact with external tools and systems. When an agent needs to perform an action (like calling a calculator tool), it requires structured information to execute the function correctly.
+
+Ways to Get Structured Output:
+The video explains that LangChain provides methods to generate structured output from two types of LLMs:
+
+	Models that inherently generate structured output: Such as OpenAI's GPT models. For these, LangChain offers the with_structured_output function.
+	Models that do not inherently generate structured output: For these, LangChain provides Output Parsers, which can convert unstructured output into a structured format. 
+
+This video primarily focuses on the with_structured_output function.
+Using with_structured_output Function:
+To use this function, you call model.with_structured_output() before invoking your model and specify the desired data format (schema). Three ways to specify the data format are discussed:
+
+	TypedDict: This Python feature allows you to define a dictionary with predefined keys and value types. It helps ensure a specific structure but does not provide data validation(it just helps you understand what value can be entered, it cannot stop you from entering anythimg).
+	Example is provided in with_structured_output_typeddict.py
+
+	Example: Defining a Review class using TypedDict with summary (string) and sentiment (string) fields. The LLM would then return a dictionary with these keys and values.
+	Annotations: You can add descriptive annotations to fields to guide the LLM more precisely, especially for ambiguous terms.
+	Optional Fields and Nested Structures: You can define optional fields using Optional and specify complex types like List[str] for multiple values (e.g., key_themes, pros, cons).
+
+	Pydantic: This is a data validation and parsing library for Python. Unlike TypedDict, Pydantic enforces data validation, raising errors if the data does not conform to the defined schema. It's often used when building APIs for data integrity and safety.
+	Example is provided in with_structured_output_pydantic.py
+
+	Example: Defining a Student class inheriting from BaseModel (from Pydantic) with a name (string). If an integer is passed for name, Pydantic will throw an error.
+	Constraints: Pydantic allows setting constraints (e.g., min_length, max_length, ge, le) and using Field functions for more advanced validation, default values, and regular expressions.
+	Conversion: Pydantic objects can be easily converted to Python dictionaries or JSON strings using methods like .model_dump() or .model_dump_json().
+
+	JSON Schema: This is a universal data format used when a project involves multiple programming languages (e.g., Python for backend, JavaScript for frontend) and the schema needs to be shared across them. JSON Schema is language-agnostic and supports validation.
+	Example is provided in with_structured_output_json.py
+
+	Example: Creating a JSON file to define the schema for a Review with properties like key_themes (array of strings), summary (string), sentiment (string, with enum for values like "positive", "negative", "neutral"), pros (optional array of strings), cons (optional array of strings), and name (optional string). The required fields are also specified.
+
+When to Use Which Method:
+
+	TypedDict: Use when you only need type hints for your schema, and the project is entirely in Python, with no need to share the schema across different languages. There is no data validation.
+	Pydantic: This is the recommended "go-to" format in most Python-centric projects. Use when you need data validation, the ability to set default values, or automatic type conversion. It offers more power and flexibility.
+	JSON Schema: Use when your project involves multiple languages, and you need a universal data format for sharing schemas. It provides validation and cross-language compatibility.
+	Important Points:
+
+The with_structured_output function has a method parameter that can be set to either json_mode or function_calling.
+json_mode: Used when the desired structured output is in JSON format (common for models like Claude or Gemini).
+function_calling: Used when the structured output is intended to trigger a function call (common for OpenAI models and building agents that interact with tools).
+
+Some models, like the TinyLlama model demonstrated, do not support structured output directly via with_structured_output in either mode. For these models, Output Parsers are required, which will be covered in the next video.
+
+The video concludes by emphasizing the power of structured output in making LLMs interact seamlessly with other systems and setting the stage for future discussions on output parsers.
+
+
+
+
