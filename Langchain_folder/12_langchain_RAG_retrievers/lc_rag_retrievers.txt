@@ -1,0 +1,79 @@
+This video from CampusX provides a comprehensive overview of Retrievers in LangChain, emphasizing their crucial role in Retrieval-Augmented Generation (RAG) based applications. The presenter explains what retrievers are, their different types, and demonstrates their implementation with code examples.
+
+Here's a breakdown of the key concepts and examples discussed:
+
+What are Retrievers?
+Retrievers are a core component in LangChain that fetch relevant documents from a data source in response to a user's query. They act like a search engine, taking a user query as input and returning multiple document objects that are most relevant to the query. In LangChain, retrievers are "runnables," meaning they can be easily integrated into chains to build flexible and advanced RAG systems.
+
+
+Types of Retrievers
+
+Retrievers can be categorized based on two main criteria:
+
+Based on Data Source: 
+
+	Different retrievers work with different data sources.
+
+	Wikipedia Retriever: This retriever queries the Wikipedia API to fetch relevant articles for a given query. It uses keyword matching to identify the most relevant articles in form of langchain document objects.
+	Vector Store Retriever: This is the most common type of retriever. It searches and fetches documents from a vector store based on semantic similarity using vector embeddings. This involves converting both documents and queries into vectors and then performing a semantic search to find the most similar ones in form of langchain document objects.
+
+
+Based on Search Strategy (Retrieval Mechanism):
+	
+	Different retrievers employ different mechanisms to search for documents.
+
+	Maximum Marginal Relevance (MMR): MMR aims to reduce redundancy in retrieved results while maintaining high relevance to the query. A common problem with normal similarity search is that it might return multiple documents that convey the same information. MMR addresses this by picking results that are not only relevant but also diverse from each other.
+	Multi Query Retriever: This retriever solves the problem of ambiguous user queries. When a user provides a broad or ambiguous query, the Multi Query Retriever uses a Large Language Model (LLM) to generate multiple, more specific queries from the original one. These multiple queries are then used to retrieve documents, and the results are merged, with duplicates removed, to provide more comprehensive and relevant answers.
+	Contextual Compression Retriever: This advanced retriever improves retrieval quality by compressing documents after retrieval. It keeps only the relevant content based on the user's query, effectively removing irrelevant parts of a document. This is particularly useful when documents might contain information on multiple topics due to how they were initially split or stored. It works in two parts: first, a base retriever fetches documents, and then a "compressor" (usually an LLM) processes these retrieved documents to extract only the information relevant to the original query.
+	
+Code Demonstrations and Examples
+
+The video provides practical code demonstrations for each type of retriever discussed.
+
+Wikipedia Retriever:
+
+The WikipediaRetriever class is imported from langchain_community.retrievers.
+An object is created by specifying the number of top results (top_k) and the desired language (lang).
+A query like "The geopolitical history of India and Pakistan from the perspective of a Chinese" is used.
+The retriever.invoke(query) method is called to fetch relevant Wikipedia articles as LangChain Document objects.
+The retrieved documents are then iterated through to display their page content.
+
+
+Vector Store Retriever:
+
+Necessary imports like Chroma (for vector store) and OpenAIEmbeddings (for embeddings) are made.
+Sample documents related to LangChain are created.
+A Chroma vector store is created from these documents using Chroma.from_documents, which also handles embedding generation.
+A retriever is formed from the vector store using vectorstore.as_retriever(), specifying search_kwargs={"k": 2} to get the top 2 results.
+A query like "What is Chroma used for" is used, and retriever.invoke(query) is called to get semantically similar documents.
+
+
+Maximum Marginal Relevance (MMR):
+
+The vectorstore.as_retriever() method is used again, but this time search_type="mmr" is specified.
+The lambda_mult parameter is introduced, which controls the balance between relevance and diversity (0 for maximum diversity, 1 for maximum similarity).
+The demonstration shows how setting lambda_mult=1 behaves like a normal similarity search, while reducing it to 0.5 yields more diverse results.
+
+
+Multi Query Retriever:
+
+The MultiQueryRetriever class is imported from langchain.retrievers.
+A diverse set of sample documents is created, including some health and lifestyle related ones and others that are completely different but might contain similar keywords (e.g., "energy system").
+A vector store is created from these documents.
+Both a normal similarity retriever and a MultiQueryRetriever are created. The MultiQueryRetriever requires an LLM (e.g., ChatOpenAI) to generate sub-queries and a base retriever to perform the actual search.
+An ambiguous query like "How to improve energy levels and maintain balance" is used.
+The results from both retrievers are compared, showing that the Multi Query Retriever significantly improves the relevance by avoiding irrelevant documents (like those about solar systems) that a simple similarity search might fetch due to keyword overlap.
+
+
+Contextual Compression Retriever:
+
+The ContextualCompressionRetriever and LLMChainExtractor classes are imported.
+Sample documents are created where a single document might contain information on multiple, unrelated topics (e.g., Grand Canyon and Photosynthesis in one document).
+A vector store is created.
+A base retriever is created (e.g., a simple similarity search retriever).
+An LLMChainExtractor is used as the compressor, powered by an LLM.
+The ContextualCompressionRetriever is then created, taking the base retriever and the compressor as arguments.
+When a query like "What is photosynthesis" is invoked, the retriever returns only the relevant lines from the document, effectively compressing the output and removing irrelevant information about the Grand Canyon.
+
+
+The video concludes by reiterating the importance of different retriever types for building robust and effective RAG systems, especially when aiming to improve performance in advanced RAG applications.

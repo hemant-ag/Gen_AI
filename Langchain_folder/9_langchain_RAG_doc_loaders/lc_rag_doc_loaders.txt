@@ -1,0 +1,110 @@
+This video introduces Document Loaders in LangChain, a crucial component for building Retrieval Augmented Generation (RAG) based applications. The speaker begins by briefly mentioning an exciting new YouTube feature—AI auto-dubbing—and asks viewers to try it out for this video.
+
+He then recaps previous videos, emphasizing the focus on LangChain's core concepts and components, ensuring a strong foundation for building LLM applications.
+
+Understanding RAG (Retrieval Augmented Generation)
+
+RAG is a technique that combines information retrieval with language generation. It addresses the limitations of LLMs, such as outdated information, lack of privacy, and context window limitations.
+
+Problem: LLMs like ChatGPT are trained on vast datasets but lack access to real-time, proprietary, or very large datasets.
+
+Solution: RAG allows you to provide an external knowledge base to the LLM. This knowledge base can be anything from company databases and PDFs to personal documents. The LLM can then retrieve relevant information from this external source to answer questions it doesn't already know.
+
+Benefits of RAG:
+Access to up-to-date information.
+Enhanced privacy by avoiding direct upload of confidential documents to public LLMs.
+Ability to process large documents by splitting them into manageable chunks.
+
+Key Components of RAG Applications
+
+RAG applications typically consist of four main components:
+
+Document Loaders: Used to load documents from various sources.
+Text Splitters: Break down large documents into smaller, manageable chunks.
+Vector Databases: Store the document chunks as numerical embeddings for efficient retrieval.
+Retrievers: Fetch the most relevant document chunks based on a user's query.
+
+This video focuses on Document Loaders.
+
+Document Loaders in LangChain
+Document Loaders are utilities in LangChain designed to load data from different sources and convert it into a standardized format: the Document object.
+
+Document Object Structure: Each Document object contains two main parts:
+Page Content: The actual content of the data.
+Metadata: Additional information about the data, such as its source, creation date, author, etc.
+
+Output Format: All LangChain document loaders return a list of Document objects.
+
+Types of Document Loaders:
+
+Text Loader
+
+Purpose: The simplest loader, designed to load plain text files.
+Use Cases: Processing log files, code snippets, or transcripts (e.g., YouTube video transcripts).
+Limitation: Works only with .txt files
+Example: Loading a .txt file containing a poem and then using LangChain to summarize it.
+
+PyPDFLoader
+
+Purpose: Reads PDF files and converts them into Document objects.
+Key Feature: Works on a page-by-page basis. If a PDF has 25 pages, it will create 25 separate Document objects, one for each page.
+Limitation: Primarily effective for PDFs with textual data. It may not perform well with scanned images or complex tabular structures.
+Alternatives for PDFs:
+PDFPlumberLoader: For tabular data.
+UnstructuredPDFLoader / Amazon Text PDF Loader: For scanned images.
+PyMuPDF: For PDFs with complex layouts.
+
+
+Directory Loader
+
+Purpose: Loads multiple documents from a single directory (folder).
+Functionality: Allows you to specify a directory path and a glob pattern (e.g., *.pdf, **/*.txt) to select which files to load. You also need to specify the loader_cls (e.g., PyPDFLoader) to tell it how to process the files.
+
+Example: Loading all PDF books from a "books" folder, where each page of every book becomes a separate Document object.
+
+Load vs. Lazy Load
+This section discusses how documents are loaded into memory:
+
+load() (Eager Loading):
+
+Loads all documents at once into memory.
+Returns a list of Document objects.
+Suitable for a small number of documents or when all data is needed immediately.
+Can consume significant memory and time for large datasets.
+
+lazy_load() (On-Demand/Lazy Loading):
+
+Loads one document at a time into memory as needed.
+Returns a generator of Document objects.
+Ideal for large datasets that cannot be loaded entirely into memory.
+Provides better memory management and can improve performance for large-scale operations.
+
+
+WebBaseLoader
+
+Purpose: Loads and extracts text content from web pages.
+Internal Working: Uses Python libraries like requests (for HTTP requests) and BeautifulSoup (to parse HTML and extract text).
+Use Cases: Loading content from static websites, blogs, news articles, or public websites.
+Limitation: Less effective with JavaScript-heavy or dynamic web pages. For such cases, SeleniumURLLoader is an alternative.
+Output: Typically returns a single Document object for a single URL, but can handle a list of URLs.
+
+
+CSVLoader
+
+Purpose: Loads data from CSV files.
+Output: Each row in the CSV file is treated as a separate Document object.
+Flexibility: Allows specifying column names to extract or combine, and enables operations like filtering or aggregation.
+
+
+Other Document Loaders and Custom Loaders
+
+LangChain offers hundreds of other document loaders for various data sources, categorized by type:
+
+Web Pages: SiteMapLoader, HyperBrowserAgent, QL.
+Cloud Services: S3, Azure, Dropbox, Google Drive.
+Social Platforms: Data from social media.
+Messaging Services: Data from chat platforms.
+Productivity Tools: Git.
+Common File Types: JSONLoader, YouTube transcript loaders. You can explore the full list in the LangChain documentation.
+
+Finally, the video explains how to create Custom Document Loaders. If your data source is not supported by existing loaders, you can build your own by inheriting from the BaseLoader class and defining custom load() and lazy_load() functions. This extensibility has allowed the LangChain community to contribute a vast pool of loaders over time.

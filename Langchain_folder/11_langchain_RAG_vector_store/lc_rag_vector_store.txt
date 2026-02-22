@@ -1,0 +1,73 @@
+This video provides a detailed explanation of vector stores, emphasizing their importance in building modern AI applications, particularly those based on Retrieval Augmented Generation (RAG).
+
+Introduction to Vector Stores
+
+The video starts by explaining the necessity of vector stores using a real-world example: building a movie recommendation system. Initially, a simple keyword-matching approach is discussed, which proves inadequate for capturing semantic similarities between movies (e.g., "My Name is Khan" and "3 Idiots" are thematically similar but have no common keywords).
+
+The Need for Semantic Search
+
+To overcome the limitations of keyword matching, the concept of comparing movie plots (stories) is introduced. This requires a way to convert text into a numerical format that can be easily compared. This is where embeddings come in. Embeddings are numerical representations (vectors) of text that capture its semantic meaning. A neural network is used to transform text plots into these high-dimensional vectors.
+
+How Vector Stores Solve Challenges
+
+Once movie plots are converted into vectors, similarity can be calculated by finding the angular distance between these vectors in a multi-dimensional space. Movies with smaller angular distances are more similar. The video identifies three main challenges in implementing such a system:
+
+Generating Embeddings: Creating embedding vectors for millions of movies.
+Storage: Traditional relational databases are not suitable for storing and efficiently querying these high-dimensional vectors for similarity.
+Semantic Search: Performing fast similarity searches across millions of vectors (e.g., finding the top 5 similar movies for a given movie). it will take a lot to time to compare with million vectors.
+
+Vector stores are introduced as the solution to these challenges.
+
+What are Vector Stores?
+A vector store is defined as a system designed to store and retrieve data represented as numerical vectors. Its key features include:
+
+Storage: Stores vectors and their associated metadata (e.g., movie ID, name). They offer both in-memory (temporary) and on-disk (persistent) storage options.
+Similarity Search: Allows comparing a query vector with stored vectors to find the most similar ones.
+Indexing: Utilizes data structures and methods to enable fast similarity searches on high-dimensional vectors, addressing the computational intensity of comparing a large number of vectors. An example of indexing is explained where vectors are grouped into "buckets" based on their initial numerical range, significantly reducing the number of comparisons needed for a search. for e.g., i have 10 lakh vectors, and will apply any clustering technique to divide that into 10 clusters/buckets so each bucket will have 1 lakh vectors. i will compare my query vector with the 10 centroids of 10 buckets, whichever is close will be picked up and so 10 lakh comparisons has been reduced to 1 lakh + 10 centroid comparisons.
+CRUD Operations: Supports Create, Retrieve, Update, and Delete operations for vectors, similar to traditional databases.
+
+Use Cases of Vector Stores
+Vector stores are crucial for various applications, including:
+
+Recommendation systems
+Semantic search
+Retrieval Augmented Generation (RAG)
+Image and multimedia search
+
+
+Vector Store vs. Vector Database
+The video clarifies the often-confused terms "vector store" and "vector database":
+
+A vector store is a lightweight system or library focused primarily on storing vectors and performing similarity searches. It might not include traditional database features like transactions, rich query languages, or role-based access control. They are ideal for prototyping and smaller-scale applications.
+A vector database is an enterprise-grade system that includes all the features of a vector store, plus additional database-like functionalities such as distributed architecture (scalability), backup and restore, ACID transactions, concurrency control, and authentication.
+Essentially, "Vector Store + Database-like Features = Vector Database." Every vector database is a vector store, but not every vector store is a vector database.
+
+Vector Stores in LangChain
+LangChain, a framework for developing LLM-based applications, provides extensive support for various vector stores due to the early recognition of the importance of embedding vectors. LangChain offers wrappers for popular vector stores like FAISS, Pinecone, Chroma, Qdrant, and Weaviate. A key design principle in LangChain is that these wrappers share common method signatures (e.g., from_documents, add_documents, similarity_search). This ensures that developers can easily switch between different vector stores with minimal code changes.
+
+Chroma Vector Store & Code Example
+The video then dives into a practical demonstration using Chroma DB, a lightweight, open-source vector database suitable for local development and small to medium-scale production needs. Chroma is described as sitting between a pure vector store and a full-fledged vector database, offering features of both.
+
+The hierarchical organization of data in Chroma DB is explained:
+
+Tenant: Represents a user, organization, or team.
+Database: Multiple databases can be created per tenant.
+Collection: Equivalent to a table in a relational database, holding multiple documents.
+Document: Contains an embedding vector and its associated metadata.
+
+
+The video then walks through a Python code example (langchain_chroma.ipynb) using LangChain and Chroma DB, demonstrating how to:
+
+Install necessary libraries.
+Load API keys for OpenAI embeddings.
+Prepare documents (text data) with metadata.
+Create a Chroma vector store, specifying the embedding function, persistence directory, and collection name.
+Add documents to the collection.
+Retrieve documents and their embeddings.
+Perform semantic search using similarity_search and similarity_search_with_score functions.
+Filter search results based on metadata.
+Update existing documents.
+Delete documents from the collection.
+
+
+The video concludes by assigning a homework task to the viewer: re-implement the same code using another vector store like FAISS or Pinecone, emphasizing that the LangChain interface remains consistent across different vector stores.

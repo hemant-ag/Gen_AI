@@ -1,0 +1,73 @@
+This video from CampusX, presented by Nitish, offers a comprehensive guide to text splitting in LangChain, a fundamental technique for building effective applications with Large Language Models (LLMs). Nitish explains that LLMs have limitations on the amount of text they can process at once (known as context length limit), and feeding them excessively large texts can lead to poor quality outputs. Text splitting addresses this by breaking down large documents into smaller, manageable "chunks," which significantly improves the efficiency and quality of LLM interactions.
+
+Here's a detailed breakdown of the text splitting techniques covered:
+
+1. Text Splitting Overview
+
+What it is: Text splitting is defined as the process of breaking down extensive pieces of text, such as articles, PDFs, HTML pages, or entire books, into smaller, more manageable segments that an LLM can effectively handle.
+
+Why it's crucial:
+Context Length Limit: LLMs have a fixed limit on how much text they can receive as input at one time. For example, an LLM might only accept 4000 tokens. If your document exceeds this, it needs to be split.
+Improved Output Quality: Feeding smaller, focused chunks to an LLM generally results in higher-quality outputs and more accurate responses.
+Better Embeddings: When texts are split logically, the generated embeddings (numerical representations of text meaning) are more precise, which is vital for tasks like semantic search and retrieval-augmented generation.
+Computational Efficiency: Processing smaller chunks is more memory-efficient and allows for parallel processing, reducing computational requirements.
+
+
+2. Length-based Text Splitting
+
+This is the most straightforward and fastest method, focusing purely on the size of the chunks.
+
+How it works: The text is divided into chunks based on a fixed character or token count.
+Example: If you set a chunk_size of 100 characters, the splitter will simply cut the text every 100 characters, creating distinct chunks.
+
+CharacterTextSplitter in LangChain:
+You import CharacterTextSplitter from langchain.text_splitter.
+You initialize it by specifying chunk_size (e.g., 100) and separator (e.g., "" for character-level splitting).
+The split_text() method is used for raw text, while split_documents() is used if you've loaded documents via a document loader.
+Chunk Overlap: This parameter specifies how many characters or tokens from the end of one chunk will also appear at the beginning of the next chunk.
+Benefit: It helps retain context that might otherwise be lost if a meaningful phrase or sentence is cut exactly at the chunk boundary. For instance, if a sentence is split in half, the overlap ensures that the latter half of the sentence in the new chunk has the context from the end of the previous chunk.
+Downside: Chunk overlap should vary between 10-20%. Too much overlap can lead to a higher number of chunks, increasing computational overhead.
+
+
+3. Text-Structure based Text Splitting (Recursive Character Text Splitting)
+This is a highly recommended and frequently used technique because it prioritizes maintaining the structural integrity and readability of the text.
+
+How it works: Instead of blindly splitting by length, this method uses a list of separators in a hierarchical order. It first tries to split by the largest separator (e.g., double newline for paragraphs), then moves to smaller ones (single newline for lines/sentences, space for words, and finally characters) if the chunks are still too large or if a split hasn't occurred. The goal is to avoid abrupt cuts mid-word or mid-sentence.
+Example: Nitish uses the sentence "My name is Nitish. I am 35 years old. I live in Gurgaon. How are you?"
+If chunk_size is 10, it first splits by nn (paragraph break), then n (line break), and then (space). It intelligently merges smaller pieces (e.g., "My", "name", "is" become "My name is") to get closer to the chunk_size without breaking words or sentences unnaturally.
+If chunk_size is 25, it might split by n to get "My name is Nitish." and "I am 35 years old." as separate chunks, as they are within the allowed size.
+If chunk_size is 50, it might simply split by nn (paragraph breaks), as the resulting paragraphs are within the chunk size limit.
+RecursiveCharacterTextSplitter in LangChain:
+Imported from langchain.text_splitter.
+You define chunk_size and chunk_overlap. This splitter is generally preferred because it creates more contextually coherent chunks compared to simple length-based splitting.
+
+
+4. Document-Structure based Text Splitting
+This is an extension of the recursive character text splitter, tailored for documents that aren't plain prose, like code or Markdown.
+
+How it works: It uses the same recursive splitting logic but with customized separators specific to the document's structure.
+Example (Python Code): For Python code, separators would include keywords like class, def, if, for, etc. This ensures that classes, functions, or logical blocks of code remain intact as single chunks.
+Example (Markdown): For Markdown, separators would be headings (#, ##), lists (-), etc. This allows Markdown sections to be processed as coherent units.
+RecursiveCharacterTextSplitter.from_language in LangChain:
+LangChain provides this convenient method to automatically use appropriate separators for various languages.
+You specify the language (e.g., Language.PYTHON, Language.MARKDOWN, Language.JAVASCRIPT, Language.HTML) along with chunk_size and chunk_overlap.
+
+
+5. Semantic Meaning-Based Text Splitting
+This is an experimental and more advanced approach that attempts to split text based on changes in its underlying meaning or topic.
+
+Motivation: Traditional methods might split a paragraph that discusses two entirely different topics (e.g., agriculture and IPL in the same paragraph). Semantic splitting aims to separate these conceptually distinct parts.
+How it works:
+The text is first broken down into smaller units, typically sentences.
+An embedding model (like OpenAI's embedding model) generates numerical "embedding vectors" for each sentence.
+The cosine similarity between the embedding vectors of consecutive sentences is calculated. High similarity suggests they are on the same topic, while low similarity indicates a topic shift.
+A threshold (e.g., based on standard deviation of similarities) is used to identify points where the similarity drops significantly, marking a boundary for a split.
+SemanticChunker in LangChain (Experimental):
+Imported from langchain_experimental.text_splitter.
+Requires an embedding model (e.g., OpenAIEmbeddings) and a threshold_type (e.g., standard_deviation).
+Current Status: This method is still in its experimental stages and, based on Nitish's experience, its performance can be inconsistent. However, as embedding models continue to improve, this technique is expected to become more prominent in the future.
+In summary, while semantic splitting is a promising area of research, the Recursive Character Text Splitter is currently the most robust and widely used technique in LangChain for creating contextually relevant and high-quality text chunks for LLM applications.
+
+
+
+
