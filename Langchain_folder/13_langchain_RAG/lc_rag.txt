@@ -1,0 +1,98 @@
+This video from CampusX provides a detailed explanation of Retrieval Augmented Generation (RAG), a powerful technique used to improve the performance of large language models (LLMs). The instructor, Nitish, breaks down what RAG is, why it's important, and how it works step-by-step, including a historical perspective.
+
+Understanding LLMs and Their Limitations
+	LLMs are large transformer-based neural network architectures with many parameters. They learn a vast amount of knowledge during pre-training. Users can access this knowledge by sending a prompt. While this often works, there are situations where simple prompting falls short:
+
+	1.Private Data: LLMs cannot answer questions about private data they haven't been trained on.
+		Example: A user asking a question about a specific doubt in a video from the learnwps.in website. The LLM wouldn't have access to this private course content.
+
+	2.Recent Data: LLMs are only as up-to-date as their last training cycle.
+		Example: Asking an LLM about the winner of the 2024 Cricket World Cup if its training data only goes up to 2023.
+
+	3.Hallucinations: LLMs sometimes generate incorrect or made-up information.
+		Example: An LLM fabricating information when asked about a topic it doesn't have sufficient knowledge on.
+
+
+Traditional Solution: Fine-Tuning
+	Historically, fine-tuning was used to address these problems. Fine-tuning involves further training a pre-trained LLM on a smaller, domain-specific dataset.
+		Example: A student who studied engineering (pre-training) then undergoes 2-3 months of company-specific training (fine-tuning) to learn how to work in that company.
+		
+		Supervised Fine-Tuning: This popular method involves providing the model with a labeled dataset of prompt-desired output pairs.
+		Example: Providing prompts like "User: What is the capital of France?" and "Desired Output: The capital of France is Paris."
+		
+		Unsupervised Fine-Tuning: this is like continued pretraining , where lets say we are providing LLM as recording of video.
+		
+		RLHF: Reinforcement Learning with Human Feedback is another fine-tuning technique that teaches the model how to behave in real-world scenarios.
+		
+		LoRA and QLoRA: These are parameter-efficient fine-tuning methods.
+
+
+Problems with Fine-Tuning
+	Despite its benefits, fine-tuning has several drawbacks:
+
+	Computational Expense: Training even a small dataset on a large model is very expensive.
+	
+	Technical Expertise: Fine-tuning requires proper AI engineers and data scientists.
+	
+	Frequent Updates: If data changes frequently (e.g., new courses on a website), repeated fine-tuning is required, which is costly.
+	Example: Adding new courses to a website would necessitate re-fine-tuning the LLM with the new data. Similarly, removing old courses would also require fine-tuning to update the model's parametric knowledge.
+
+
+Introducing In-Context Learning
+	In-context learning is an emergent property of large LLMs where they can learn to solve tasks by observing examples provided within the prompt -- without updating its weights. 
+
+	Example 1: Sentiment Analysis:
+	Prompt: "Below are examples of text labeled with their sentiment. Use these examples to determine the sentiment of the final text."
+	Examples: "I love this phone. It's so smooth. (Positive)", "This app crashes a lot. (Negative)", "The camera is amazing. (Positive)"
+	New Text: "I hate the battery life."
+	The LLM learns from the examples and predicts "Negative."
+	
+	Example 2: Named Entity Recognition:
+	Prompt: "Label the named entities in the sentence."
+	Examples: "Apple (Company) acquired Beats (Company) (Product)."
+	New Sentence: "Google (Company) launched a new AI model (Product)."
+	The LLM learns from the examples and extracts "Google" and "AI model" as entities.
+	
+
+Retrieval Augmented Generation (RAG)
+	RAG enhances in-context learning by providing the LLM with relevant context directly within the prompt, rather than just examples.
+
+	Example: Chatbot for Video Lectures:
+	A student has a doubt about "gradient descent" in a 2-hour linear regression lecture.
+	Instead of sending the entire 2-hour transcript, the system sends the student's question and only the relevant segment of the transcript (e.g., from minute 5 to minute 25) where gradient descent is discussed. This segment acts as the context.
+	The prompt sent to the LLM would look like: "You are a helpful assistant. Answer the question only from the provided context... If the context is insufficient just say you don't know. Context: [Gradient Descent Transcript] Question: [Student's Doubt]"
+	
+
+How RAG Works: Four Steps
+	RAG combines information retrieval and text generation. It involves four main steps:
+
+	Indexing: Creating an external knowledge base from your data.
+
+		Step 1: Document Ingestion: Loading data from various sources (e.g., video transcripts, company documents from Google Drive or AWS S3) into memory.
+		Step 2: Text Chunking: Breaking down large documents into smaller, semantically meaningful chunks to overcome LLM context length limitations and improve semantic search quality.
+		Example: A 2-hour video transcript is too large; it's split into smaller chunks, ensuring each chunk covers a single topic.
+		Step 3: Generating Embeddings: Converting each text chunk into a dense vector (embedding) that captures its meaning. This is crucial for semantic search.
+		Step 4: Storing in a Vector Store: Saving the text chunks and their corresponding embedding vectors in a vector database (e.g., FAISS, Chroma, Pinecone). This becomes the external knowledge base.
+	
+
+	Retrieval: Finding the most relevant pieces of information from the external knowledge base based on the user's query.
+
+		Example: For a query about "gradient descent optimization," the system identifies only the chunks in the vector store related to gradient descent, ignoring other topics like OLS or multiple linear regression.
+		Process: The user's query is converted into an embedding, and a semantic search is performed in the vector store to find the closest vectors. These relevant chunks are then fetched and used as the context.
+
+	Augmentation: Combining the user's query and the retrieved context to create a comprehensive prompt for the LLM. This "augments" the LLM's parametric knowledge with external information.
+
+	Generation: The LLM uses its text generation capabilities and in-context learning to provide a response based on its parametric knowledge and the provided context.
+
+
+How RAG Solves the Problems
+
+	Private Data: RAG directly solves this by using the user's private data to build the external knowledge base.
+	
+	Recent Data: RAG can easily incorporate recent information by updating the external knowledge base, which is faster and cheaper than re-fine-tuning an LLM.
+		Example: If new regulations are released, they can be indexed into the knowledge base, and the RAG system will instantly have access to them.
+		
+	Hallucinations: RAG reduces hallucinations by explicitly instructing the LLM to answer only from the provided context and to say "I don't know" if the information is insufficient. This "grounds" the LLM's response.
+
+RAG vs. Fine-Tuning
+RAG is generally a cheaper and simpler alternative to fine-tuning because it doesn't involve training the LLM. Instead, it focuses on effectively retrieving and injecting relevant information.
