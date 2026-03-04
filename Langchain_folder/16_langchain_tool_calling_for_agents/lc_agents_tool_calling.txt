@@ -1,0 +1,72 @@
+This video continues a playlist on building AI agents using LangChain, focusing on the crucial concept of Tool Calling. It explains how Large Language Models (LLMs) can be empowered to perform real-world tasks by integrating with external tools.
+
+The video breaks down the process into four key steps:
+
+Tool Creation:
+
+What it is: 
+Tools are essentially Python functions designed to carry out specific tasks. They are given a name, a description (so the LLM understands their purpose), and an input schema (the format in which they expect arguments).
+Example: A simple "multiply" tool is created. It takes two integers (A and B) as input, has a description explaining it returns their product, and outputs an integer. When invoked with A=3 and B=4, it returns 12.
+
+Tool Binding:
+
+What it is: 
+This is the process of registering the created tools with an LLM. By binding, the LLM learns:
+	Which tools are available to it.
+	What each tool does (from its description).
+	The correct input format for each tool (from its schema).
+	Example: The previously created "multiply" tool is bound to a ChatOpenAI LLM instance using the bind_tools() function. This creates a new LLM instance, llm_with_tools, that is aware of the "multiply" tool.
+	
+Tool Calling:
+
+What it is: 
+This is when the LLM, during a conversation or task, decides that it needs to use a specific tool to fulfill a request. It then generates a structured output that includes the name of the tool it recommends and the arguments it suggests using with that tool. It's crucial to understand that the LLM does not actually run the tool itself; it only suggests which tool to use and what inputs to provide. The actual execution is handled by the programmer or LangChain.
+Example:
+If asked a general question like "Hi, how are you?", the LLM responds directly without calling any tool, as it doesn't need external assistance.
+If asked "Can you multiply 3 with 10?", the LLM identifies the need for multiplication. Its response contains an empty content field but includes a "tool_calls" section. This section specifies that the "multiply" tool should be called with arguments A=3 and B=10. This is the LLM's suggestion, not the actual execution.
+
+Tool Execution:
+
+What it is: 
+This is the step where the programmer (or LangChain automatically) takes the tool suggestion from the LLM and actually runs the specified tool with the suggested arguments. The output of the tool's execution is then returned, often as a "tool message." This tool message can then be fed back to the LLM as part of the conversation history, allowing the LLM to generate a final, informed response.
+Example (Multiplication Tool): The "tool_call" dictionary (containing the tool name "multiply" and arguments A=3, B=10) obtained from the LLM's "tool_calling" step is used to invoke the "multiply" tool. The tool executes, returns the result (30), which is then packaged as a "tool message." This "tool message," along with the initial human query and the LLM's initial tool call suggestion (AI message), forms a conversation history. When this complete history is sent back to the LLM, it can finally provide a coherent answer like "The product of 3 and 10 is 30."
+
+
+Real-Time Currency Conversion Application:
+
+The video then demonstrates a more complex application: a real-time currency converter, highlighting the power of tools in solving dynamic problems that LLMs can't solve on their own (due to outdated training data).
+
+Problem: LLMs have static knowledge. They cannot provide real-time currency conversion rates, which fluctuate constantly.
+
+Solution using Tools:
+
+Tool 1: get_conversion_factor: This tool takes a base_currency (e.g., "USD") and a target_currency (e.g., "INR") as input. It then hits a real-time currency API to fetch the current conversion rate and returns it as a float.
+Tool 2: convert: This tool takes a base_currency_value (the amount to convert) and a conversion_rate as input. It then calculates and returns the target currency value by multiplying the two.
+The Challenge (and Solution): "Injected Tool Arguments"
+
+When a user asks to convert "10 USD to INR," the LLM might suggest two tool calls: get_conversion_factor first, then convert.
+However, a problem arises: the convert tool needs the conversion_rate, which is only available after the get_conversion_factor tool has been executed. If the LLM tries to suggest arguments for convert before get_conversion_factor runs, it might rely on its outdated internal knowledge, leading to incorrect conversions.
+Solution: The Annotated[float, InjectableToolArgument] type is used for the conversion_rate argument in the convert tool. This tells the LLM: "Do not try to fill this argument yourself. The programmer will inject this value after running earlier tools." This ensures the LLM relies on external tool execution for dynamic data.
+Execution Flow for Currency Conversion:
+
+Human Message: "What is the conversion factor between USD and INR, and based on that, can you convert 10 USD to INR?"
+LLM Call: The human message is sent to the llm_with_tools.
+LLM Tool Suggestion (Tool Calling): The LLM intelligently suggests two tool calls:
+get_conversion_factor with base_currency="USD" and target_currency="INR".
+convert with base_currency_value=10, but the conversion_rate is left unfilled (due to InjectableToolArgument).
+Programmer Executes First Tool: The get_conversion_factor tool is executed. It makes an API call and returns the current real-time conversion rate (e.g., 85.34). This result is stored as tool_message_one and added to the conversation history.
+Programmer Executes Second Tool (with Injection): The convert tool is now executed. The base_currency_value (10) is taken from the LLM's suggestion, and the real-time conversion_rate (85.34) extracted from tool_message_one is manually "injected." The tool calculates 10 * 85.34 = 853.4. This result is stored as tool_message_two and added to the conversation history.
+Final LLM Call: The entire conversation history (human message, AI message with tool calls, tool_message_one, tool_message_two) is sent back to the LLM.
+LLM Final Response: The LLM now has all the context, including the real-time conversion rate and the calculated result, and can generate a comprehensive answer like "The conversion factor between USD and INR is 85.34. Based on this, converting 10 USD to INR yields 853.4."
+AI Agent vs. This Application:
+
+The video clarifies that while this currency converter uses tools and tool calling, it is not a true AI agent. The key difference lies in autonomy. In this application, the programmer manually orchestrated the execution of the tools in sequence. A true AI agent would autonomously:
+
+Break down the problem (e.g., "First, I need the conversion rate, then I need to multiply").
+Decide which tools to call and in what order.
+Execute the tools and integrate their results without constant programmer intervention.
+The next video in the series will cover building a truly autonomous AI agent using LangChain.
+
+
+
+
