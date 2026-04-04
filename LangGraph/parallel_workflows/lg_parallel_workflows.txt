@@ -1,0 +1,17 @@
+This video serves as a practical guide to building parallel workflows using LangGraph. It builds upon the previous tutorial on sequential workflows to demonstrate how to execute independent tasks simultaneously, which is essential for scaling AI applications for speed and efficiency.
+
+Example 1: Non-LLM Cricket Analysis
+The first part of the video introduces a workflow to calculate cricket statistics. Instead of calculating metrics sequentially, the video demonstrates how to run separate nodes in parallel to compute:
+
+Strike Rate
+Boundary Percentage
+Balls per Boundary
+A critical lesson here is how to handle state updates. In parallel workflows, if every node tries to update the entire application state, LangGraph will trigger an error due to conflicting write operations. The solution is to use partial updates, where each node returns only the specific key-value pair it calculated, rather than returning the entire dictionary. This approach is recommended for both sequential and parallel workflows as a best practice.
+
+Example 2: LLM-Based Essay Evaluation
+The second, more advanced example features an LLM workflow for evaluating UPSC essays. This use case covers three advanced concepts:
+
+Parallel LLM Execution: The system sends an essay to three different LLM nodes simultaneously, each focusing on a specific aspect: Clarity of Thought, Depth of Analysis, and Language Quality.
+Structured Outputs: The workflow uses LangChain to ensure the LLMs return data in a specific JSON format (containing both a feedback string and an integer score), making it easy to extract and process the results programmatically.
+Reducer Functions: To aggregate results from parallel branches into a single list (the individual scores), the video explains the use of the operator.add function. This Reducer function allows multiple parallel nodes to append their output scores to a shared list in the state without overwriting each other.
+Finally, the workflow channels these results into a Final Evaluation node, which uses an LLM to generate a summarized textual feedback and calculates the average of the individual scores to provide a comprehensive final grade.

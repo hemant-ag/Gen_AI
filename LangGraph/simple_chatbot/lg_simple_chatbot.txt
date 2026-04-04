@@ -1,0 +1,30 @@
+This video serves as an introductory tutorial on building an Agentic AI chatbot using the LangGraph library.
+The instructor, Nitish, outlines a comprehensive roadmap for a series of videos that will eventually cover advanced topics like RAG (Retrieval-Augmented Generation), tool usage, human-in-the-loop (HITL) interaction, and LangSmith integration.
+
+Core Concepts Covered
+
+State Management: 
+The foundation of the chatbot is its State, which stores the conversation history. 
+Because standard states reset upon each new interaction, the instructor explains the necessity of a reducer function (specifically add_messages) to ensure that new inputs are appended to the existing history rather than replacing it.
+
+Workflow Design: 
+The chatbot is built as a simple sequential workflow consisting of a single node—the Chat Node—which processes human input through an LLM and updates the state.
+
+Memory & Persistence: 
+The main challenge addressed is the chatbot's lack of memory. 
+Initially, the bot fails to remember previous context because each program invocation clears the volatile memory. 
+(so in while loop each invocation or invoke triggers the chatnode and goes to end node, and memory is erased)
+
+To solve this, the instructor introduces Persistence using MemorySaver.
+
+Threads and Checkpointers: 
+By implementing a MemorySaver checkpointer, the chatbot can store state in RAM.
+By defining a thread_id in the configuration during each invocation, the system can distinguish between different users or conversation sessions, allowing the bot to maintain context across multiple interactions.
+
+
+Practical Implementation
+The instructor demonstrates how to structure the graph, add nodes, and define edges.
+
+He shows how to create an interactive loop where the user can chat with the bot in a console-based environment.
+He highlights the difference between ephemeral, in-memory storage (RAM) and production-ready persistent storage (Databases), noting that while RAM works for testing, it loses all information once the program is restarted.
+This video acts as a foundational lesson, setting up the framework for future, more complex features while highlighting the critical role of persistence in creating conversational agents.

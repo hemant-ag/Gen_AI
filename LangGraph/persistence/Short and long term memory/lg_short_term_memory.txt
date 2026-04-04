@@ -1,0 +1,47 @@
+This video provides a comprehensive guide on implementing short-term memory in AI systems using LangGraph. 
+Since Large Language Models (LLMs) are stateless by design, they do not retain information between separate invocations. To overcome this, the video explains the concept of maintaining a conversation buffer where history is passed alongside each new prompt.
+
+Core Implementation Concepts
+
+Checkpointers: 
+These are the primary tools in LangGraph used to store the graph's state at every step of the execution.
+
+Threads and Thread IDs: 
+Each unique conversation is assigned a specific thread ID, allowing the system to isolate and track different sessions.
+
+In-Memory Storage: 
+Initially, the video demonstrates storing state in the system's RAM. 
+However, it highlights that this method is not suitable for production because the memory is volatile and will be lost if the program is restarted.
+
+
+Achieving Production-Grade Persistence
+
+To ensure conversations are saved permanently, the video teaches how to replace in-memory storage with a robust database system. 
+Specifically, it demonstrates how to set up PostgreSQL using Docker to serve as a persistent checkpointer. 
+This ensures that even if the application crashes or restarts, the conversation history remains intact and can be retrieved using the thread ID.
+
+
+Solving the Context Window Problem
+
+As conversations grow, they may exceed the LLM's context window, which can lead to inaccuracies or hallucinations. 
+
+
+The video covers three essential techniques to manage this:
+
+Trimming: 
+This involves setting a maximum token limit. 
+When the conversation exceeds this, the system keeps the most recent messages and removes the older ones. 
+While effective, it has a downside: the model loses access to older, potentially important context.
+
+Deletion: 
+This is the act of manually removing specific older messages from the conversation history based on pre-defined logic (e.g., removing the first six messages once the total count exceeds ten).
+
+Summarization: 
+This is the most effective approach for long-term context retention. 
+Instead of simply deleting old messages, the system sends them to an LLM to generate a concise summary. 
+This summary is then stored in the state. 
+Consequently, the main LLM receives both the recent individual messages and the summary of the past conversation, maintaining full context without overflowing the token limit.
+
+
+
+By combining these techniques—specifically using deletion to clean up the message list and summarization to compress historical data—developers can build highly reliable and efficient agentic AI systems that handle long-term interactions seamlessly.

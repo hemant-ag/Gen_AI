@@ -1,0 +1,30 @@
+This video serves as a comprehensive guide to building conditional workflows in LangGraph, an essential concept for creating sophisticated Agentic AI applications. In programming, conditional workflows act like 'if-else' statements, allowing the system to branch into different paths based on specific criteria or outcomes, rather than just executing tasks in a rigid, linear sequence.
+
+Core Concepts Covered:
+Sequential vs. Parallel vs. Conditional: The instructor distinguishes between sequential workflows (linear tasks), parallel workflows (tasks running simultaneously), and conditional workflows (a single path chosen based on specific logic).
+Conditional Branching: This is the heart of the tutorial. It involves creating a routing function that evaluates the state of the system and returns the name of the next node to execute. The system then uses the add_conditional_edges function to navigate to the appropriate branch.
+
+Practical Implementation 1: 
+Mathematical Problem Solving
+
+The video demonstrates conditional workflows using a classic quadratic equation solver.
+
+The workflow begins by taking coefficients (a, b, and c) as input.
+It displays the equation and calculates the discriminant (b squared minus 4ac).
+Based on the discriminant's value, the system branches into one of three distinct paths:
+Positive Discriminant: Calculates two distinct real roots.
+Zero Discriminant: Calculates one repeating root.
+Negative Discriminant: Concludes that there are no real roots.
+
+
+Practical Implementation 2:
+LLM-Based Customer Support
+
+The second part builds a more complex, real-world application for handling customer reviews using an LLM (GPT-4o-mini).
+
+Sentiment Extraction: The process starts by feeding the customer review into an LLM to categorize its sentiment as either positive or negative using a structured output schema.
+Conditional Routing:
+If the sentiment is positive, the workflow routes to a node that generates a warm, appreciative response.
+If the sentiment is negative, the workflow triggers a diagnostic node. This node uses a secondary LLM to extract key details from the review, such as the issue type (e.g., bug, UI, performance), user tone, and urgency level.
+Resolution: Based on these extracted details, the system generates an empathetic and helpful resolution, providing a tailored response that addresses the specific frustration of the customer.
+By the end of the video, the viewer gains a clear understanding of how to structure state-based graphs in LangGraph, use Pydantic models for structured outputs, and implement intelligent branching logic that allows AI agents to adapt their behavior dynamically.
