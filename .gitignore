@@ -1,2 +1,17 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Databricks / logs
+*.log
+*.csv
+*.parquet
+
+# Node (if any)
+node_modules/
+
+# OS
+.DS_Store
+
 .env
-venv
